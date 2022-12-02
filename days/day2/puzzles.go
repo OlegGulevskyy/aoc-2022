@@ -43,10 +43,11 @@ func p2(in string) int {
 		aIndex := strings.Index("ABC", ln[0])
 		switch ln[1] {
 		case "X":
-			if (aIndex+1)%4-1 == 0 {
+			c := (aIndex+1)%4 - 1
+			if c == 0 {
 				ans += 3
 			} else {
-				ans += (aIndex+1)%4 - 1
+				ans += c
 			}
 		case "Y":
 			ans += 3
