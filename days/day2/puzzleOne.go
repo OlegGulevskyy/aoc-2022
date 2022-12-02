@@ -1,17 +1,13 @@
 package day2
 
-import "strings"
-
 func puzzleOne(in string) int {
-	pairs := strings.Split(in, "\n")
-	// remove last item that is always empty
-	pairs = pairs[:len(pairs)-1]
+	pairs :=  pairsFromInput(in)
 	var totalPoints int
 
 	for _, p := range pairs {
-		letters := strings.Split(p, " ")
+		letters := lettersFromPair(p)
 		matchedItems := leftAndRightItems(letters[0], letters[1])
-		playerPoints := playerPointsPerPair(&matchedItems)
+		playerPoints := playerPointsByItems(&matchedItems)
 		totalPoints += playerPoints
 	}
 
@@ -21,7 +17,6 @@ func puzzleOne(in string) int {
 func leftAndRightItems(letters ...string) items {
 	var leftAndRight items
 	for _, l := range letters {
-
 		for _, gItem := range gameItems {
 			found := gItem.matchItemByLetter(l)
 			if found {
@@ -34,24 +29,24 @@ func leftAndRightItems(letters ...string) items {
 	return leftAndRight
 }
 
-func playerPointsPerPair(pair *items) int {
+func playerPointsByItems(pair *items) int {
 	left := (*pair)[0]
 	right := (*pair)[1]
 
 	var pairPoints int
 	// it's a draw
 	if left.id == right.id {
-		pairPoints = drawPoints + right.points
+		pairPoints = draw.points + right.points
 	}
 
 	// left side wins, it's a loose
 	if left.id == right.looseFrom {
-		pairPoints = losePoints + right.points
+		pairPoints = lose.points + right.points
 	}
 
 	// right side wins, it's a win for a player
 	if left.looseFrom == right.id {
-		pairPoints = winPoints + right.points
+		pairPoints = win.points + right.points
 	}
 
 	return pairPoints
