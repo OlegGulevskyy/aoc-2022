@@ -18,8 +18,10 @@ func Solution() error {
 	p1Ans := p1(input)
 	p2Ans := p2(input)
 
-	fmt.Println("Puzzle one answer: ", p1Ans)
-	fmt.Println("Puzzle two answer: ", p2Ans)
+	fmt.Println("--------------")
+	fmt.Println("Day 02: Puzzle one answer: ", p1Ans)
+	fmt.Println("Day 02: Puzzle two answer: ", p2Ans)
+	fmt.Println("--------------")
 
 	return nil
 }

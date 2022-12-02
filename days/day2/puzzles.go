@@ -1,7 +1,6 @@
 package day2
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -41,14 +40,13 @@ func p2(in string) int {
 		}
 
 		ln := strings.Split(l, " ")
-		fmt.Println(ln[0], ln[1])
 		aIndex := strings.Index("ABC", ln[0])
 		switch ln[1] {
 		case "X":
-			if (aIndex + 1) % 4 - 1 == 0 {
+			if (aIndex+1)%4-1 == 0 {
 				ans += 3
 			} else {
-				ans += (aIndex + 1) % 4 - 1
+				ans += (aIndex+1)%4 - 1
 			}
 		case "Y":
 			ans += 3

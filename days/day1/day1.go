@@ -2,7 +2,7 @@ package day1
 
 import (
 	"embed"
-	"log"
+	"fmt"
 )
 
 //go:embed input.txt
@@ -17,8 +17,10 @@ func Solution() error {
 	resOne := puzzleOne(string(d))
 	resTwo := puzzleTwo(resOne[:3])
 
-	log.Println("Result of puzzle one => ", resOne[0])
-	log.Println("Result of puzzle two => ", resTwo)
+	fmt.Println("--------------")
+	fmt.Println("Day 01: Result of puzzle one: ", resOne[0])
+	fmt.Println("Day 01: Result of puzzle two: ", resTwo)
+	fmt.Println("--------------")
 
 	return nil
 }
