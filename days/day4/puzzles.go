@@ -42,7 +42,7 @@ func p1(in string) (int, int) {
 			char := fmt.Sprintf("-%d-", i)
 			s += char
 
-			if strings.Index(f, char) != -1 {
+			if totalOverlap == false && strings.Index(f, char) != -1 {
 				totalOverlap = true
 			}
 		}
