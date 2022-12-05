@@ -1,4 +1,4 @@
-package day4
+package day5
 
 import (
 	"embed"
@@ -17,12 +17,15 @@ func Solution() error {
 	}
 	input := string(d)
 
-	p1Ans, p2Ans := p1(input)
+	p1Ans := p1(input)
+	p2Ans := p2(input)
 
 	fmt.Println("--------------")
-	fmt.Println("Day 04: Puzzle one answer: ", p1Ans)
-	fmt.Println("Day 04: Puzzle two answer: ", p2Ans)
+	fmt.Println("Day 05: Puzzle one answer: ", p1Ans)
+	fmt.Println("Day 05: Puzzle two answer: ", p2Ans)
 	fmt.Println("--------------")
 
 	return nil
 }
+
+
