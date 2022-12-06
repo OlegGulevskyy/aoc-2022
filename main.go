@@ -6,6 +6,7 @@ import (
 	"github.com/OlegGulevskyy/aoc2022/days/day2"
 	"github.com/OlegGulevskyy/aoc2022/days/day3"
 	"github.com/OlegGulevskyy/aoc2022/days/day4"
+	"github.com/OlegGulevskyy/aoc2022/days/day5"
 )
 
 func main() {
@@ -15,4 +16,5 @@ func main() {
 	day2.Solution()
 	day3.Solution()
 	day4.Solution()
+	day5.Solution()
 }
