@@ -9,6 +9,7 @@ import (
 )
 
 var TotalSizeThreshold = 100000
+var TotalRequiredForUpdate = 30000000
 
 type Dir struct {
 	Name     string
@@ -18,7 +19,12 @@ type Dir struct {
 	Parent   *Dir
 }
 
+var BiggestDir = &Dir{}
 var ans int
+var SmallestDirToRemove = &Dir{Size: 1000000000}
+
+var totalNeededForUpdate = 27322861
+var needsToBeDeleted = 2677139
 
 func p1(input string) int {
 	lines := inpututils.Lines(input)
@@ -68,7 +74,34 @@ func p1(input string) int {
 	}
 
 	handleFs(fs["/"])
+
+	findBiggestDir(fs["/"])
+	totalNeededForUpdate = 70000000 - BiggestDir.Size
+	needsToBeDeleted = 30000000 - totalNeededForUpdate
+
+	findSmallestDirForRemoval(fs["/"])
+
 	return ans
+}
+
+func findBiggestDir(dir *Dir) {
+	if dir.Size > BiggestDir.Size {
+		BiggestDir = dir
+	}
+	for _, child := range dir.Children {
+		findBiggestDir(child)
+	}
+}
+
+func findSmallestDirForRemoval(dir *Dir) {
+	if dir.Size - needsToBeDeleted >= 0 {
+		if SmallestDirToRemove.Size > dir.Size {
+			SmallestDirToRemove = dir
+		}
+	}
+	for _, child := range dir.Children {
+		findSmallestDirForRemoval(child)
+	}
 }
 
 func incrementParentSize(p *Dir, size int) {
