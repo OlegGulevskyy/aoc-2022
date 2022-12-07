@@ -1,8 +1,7 @@
 package day7
 
 import (
-	"fmt"
-	"sort"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -11,88 +10,93 @@ import (
 
 var TotalSizeThreshold = 100000
 
-func p1(input string) int {
-	var ans int
-	lines := inpututils.Lines(input)
-	fs2 := map[string][]string{}
+type Dir struct {
+	Name     string
+	Size     int
+	Files    []string
+	Children []*Dir
+	Parent   *Dir
+}
 
-	currDir := "/"
+var ans int
+
+func p1(input string) int {
+	lines := inpututils.Lines(input)
+	fs := make(map[string]*Dir)
+	fs["/"] = &Dir{Name: "/", Size: 0, Children: []*Dir{}, Parent: nil}
+
+	currDir := fs["/"]
+
 	for l := 2; l < len(lines); l++ {
 		line := lines[l]
 
-		if isDir(line) {
-			dirName := strings.Split(line, " ")[1]
-			if fs2[currDir + dirName + "/"] == nil {
-				fs2[currDir + dirName + "/"] = []string{}
-			} else {
-				fs2[currDir + dirName + "/"] = fs2[currDir + dirName + "/"]
-			}
-
-		} else if isCmd(line) {
+		if isCmd(line) {
 			cmd := strings.Split(line, " ")[1]
-			if cmd == "cd" {
-				toDir := strings.Split(line, " ")[2]
-				if toDir == ".." {
-					currDir = strings.Join(strings.Split(currDir, "/")[:len(strings.Split(currDir, "/"))-2], "/") + "/"
-					if currDir == "" {
-						currDir = "/"
-					}
-				} else {
-					currDir = currDir + toDir + "/"
-				}
-			
-			} 
-		} else {
-			// file
-			fs2[currDir] = append(fs2[currDir], line)
-		}
-	}
-
-
-	keys := make([]string, 0, len(fs2))
-	for k := range fs2 {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	for _, k := range keys {
-		fmt.Println("Dir:", k, "Files:", fs2[k])
-	}
-
-	for _, k := range keys {
-		dir := k
-		files := fs2[k]
-		if len(files) == 0 {
-			continue
-		}
-
-		dirSize := folderSize(files)
-		if dirSize > TotalSizeThreshold {
-			continue
-		}
-
-		if dirSize < TotalSizeThreshold {
-			fmt.Println("Smaller than threshold:", dir, dirSize)
-			ans += dirSize
-		}
-
-		// find size of nested dirs
-		for nestedDir, _ := range fs2 {
-			if dir == "/" {
+			if cmd == "ls" {
 				continue
 			}
 
-			if strings.Index(nestedDir, dir) == 0 && nestedDir != dir {
-				nestedDirSize := folderSize(fs2[nestedDir])
-				dirSize += nestedDirSize
+			toDir := strings.Split(line, " ")[2]
+			if toDir == ".." {
+				currDir = currDir.Parent
+			} else {
+				for _, d := range currDir.Children {
+					if d.Name == toDir {
+						currDir = d
+						break
+					}
+				}
 			}
-		}
-		if dirSize <= TotalSizeThreshold {
-			// ans += dirSize
+
+		} else if isDir(line) {
+			dirName := strings.Split(line, " ")[1]
+			dir := &Dir{
+				Name:   dirName,
+				Parent: currDir,
+			}
+
+			currDir.Children = append(currDir.Children, dir)
+		} else {
+			fileName := strings.Split(line, " ")[1]
+			fileSize := fileSize(strings.Split(line, " ")[0])
+
+			currDir.Size += fileSize
+			currDir.Files = append(currDir.Files, fileName)
+
+			incrementParentSize(currDir, fileSize)
 		}
 	}
 
+	handleFs(fs["/"])
 	return ans
+}
+
+func incrementParentSize(p *Dir, size int) {
+	if p.Parent != nil {
+		p.Parent.Size += size
+		incrementParentSize(p.Parent, size)
+	}
+}
+
+func handleFs(dir *Dir) {
+	v := reflect.ValueOf(dir)
+	indV := reflect.Indirect(v)
+
+	if dir.Size <= TotalSizeThreshold {
+		ans += dir.Size
+	}
+
+	for i := 0; i < indV.NumField(); i++ {
+		fieldName := indV.Type().Field(i).Name
+		fieldValue := indV.Field(i)
+
+		if fieldName == "Children" {
+			for _, child := range fieldValue.Interface().([]*Dir) {
+				handleFs(child)
+			}
+		}
+
+	}
 }
 
 func folderSize(dir []string) int {
